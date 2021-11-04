@@ -7,10 +7,11 @@ import (
 )
 
 type Config struct {
-	ServerAddress string `env:"SERVER_ADDRESS" envDefault:":8080"`
-	NumOfWorkers  int    `env:"NUM_OR_WORKERS" envDefault:"10"`
-	BaseURL       string `env:"BASE_URL"`
-	DatabaseDSN   string `env:"DATABASE_DSN" envDefault:"postgresql://user:password@localhost:5432/gophermart?sslmode=disable"`
+	ServerAddress        string `env:"RUN_ADDRESS" envDefault:":8080"`
+	NumOfWorkers         int    `env:"NUM_OR_WORKERS" envDefault:"10"`
+	BaseURL              string `env:"BASE_URL"`
+	AccrualSystemAddress string `env:"ACCRUAL_SYSTEM_ADDRESS"`
+	DatabaseDSN          string `env:"DATABASE_URI" envDefault:"postgresql://user:password@localhost:5432/gophermart?sslmode=disable"`
 }
 
 func New() *Config {

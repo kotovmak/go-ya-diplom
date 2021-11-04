@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"flag"
 	"go-ya-diplom/internal/app/config"
 	"go-ya-diplom/internal/app/handlers"
 	"go-ya-diplom/internal/app/store"
 	"log"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -13,6 +15,7 @@ import (
 
 func main() {
 	cfg := config.New()
+	initFlags(cfg)
 
 	ctx := context.Background()
 
@@ -35,7 +38,55 @@ func main() {
 	h := handlers.New(s, cfg.BaseURL)
 
 	e.GET("/", h.HelloHandler)
+	v1 := e.Group("/api")
+	{
+		user := v1.Group("/user")
+		{
+			user.POST("/register", h.HelloHandler)
+			user.POST("/login", h.HelloHandler)
+			user.POST("/orders", h.HelloHandler)
+			user.GET("/orders", h.HelloHandler)
+			user.GET("/balance", h.HelloHandler)
+			balance := v1.Group("/balance")
+			{
+				balance.POST("/withdraw", h.HelloHandler)
+				balance.GET("/withdrawals", h.HelloHandler)
+			}
+		}
+	}
 
 	log.Printf("[INIT] ServerAddress '%s'", cfg.ServerAddress)
 	log.Printf("[INIT] BaseURL '%s'", cfg.BaseURL)
+	if err := e.Start(cfg.ServerAddress); err != nil && err != http.ErrServerClosed {
+		log.Fatal(err)
+	}
+}
+
+func initFlags(cfg *config.Config) {
+	flag.Func("a", "Server start address string", func(flagValue string) error {
+		if flagValue != "" {
+			cfg.ServerAddress = flagValue
+		}
+		cfg.SetBaseURL()
+		return nil
+	})
+	flag.Func("b", "Base URL string for generated short link", func(flagValue string) error {
+		if flagValue != "" {
+			cfg.BaseURL = flagValue
+		}
+		return nil
+	})
+	flag.Func("r", "Accrual system address", func(flagValue string) error {
+		if flagValue != "" {
+			cfg.AccrualSystemAddress = flagValue
+		}
+		return nil
+	})
+	flag.Func("d", "Database DSN string", func(flagValue string) error {
+		if flagValue != "" {
+			cfg.DatabaseDSN = flagValue
+		}
+		return nil
+	})
+	flag.Parse()
 }
