@@ -10,4 +10,5 @@ var (
 	ErrEmptySigningKey          = errors.New("empty signing key")
 	ErrUnexpectedSigningMethod  = errors.New("unexpected signing method")
 	ErrAlreadyExists            = errors.New("already exist")
+	ErrOrderNumberInvalid       = errors.New("order number is invalid")
 )

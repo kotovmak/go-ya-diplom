@@ -25,25 +25,6 @@ func (r *UserRepository) Create(u *model.User) error {
 	).Scan(&u.ID)
 }
 
-// Find ...
-func (r *UserRepository) Find(id int) (*model.User, error) {
-	u := &model.User{}
-	if err := r.store.db.QueryRow(
-		"SELECT user_id, login, password, balance, withdrawn FROM users WHERE user_id = $1",
-		id,
-	).Scan(
-		&u.ID,
-		&u.Login,
-		&u.EncryptedPassword,
-		&u.Balance,
-		&u.Withdrawn,
-	); err != nil {
-		return nil, err
-	}
-
-	return u, nil
-}
-
 // FindByLogin ...
 func (r *UserRepository) FindByLogin(login string) (*model.User, error) {
 	u := &model.User{}

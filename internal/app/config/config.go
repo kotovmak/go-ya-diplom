@@ -12,8 +12,8 @@ type Config struct {
 	BaseURL              string `env:"BASE_URL"`
 	SigningKey           string `env:"SIGNING_KEY" envDefault:"some-secret-key"`
 	RefreshKey           string `env:"REFRESH_KEY" envDefault:"some-refresh-secret-key"`
-	TokenTTL             string `env:"TOKEN_TTL" envDefault:"1h"`
-	RefreshTTL           string `env:"REFRESH_TTL" envDefault:"24h"`
+	TokenTTL             string `env:"TOKEN_TTL" envDefault:"24h"`
+	RefreshTTL           string `env:"REFRESH_TTL" envDefault:"240h"`
 	AccrualSystemAddress string `env:"ACCRUAL_SYSTEM_ADDRESS"`
 	DatabaseDSN          string `env:"DATABASE_URI" envDefault:"postgresql://user:password@localhost:5432/gophermart?sslmode=disable"`
 }

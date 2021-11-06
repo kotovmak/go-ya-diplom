@@ -10,7 +10,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -31,15 +30,14 @@ func main() {
 	e.Use(
 		middleware.RequestID(),
 		middleware.Logger(),
-		middleware.Recover(),
+		//middleware.Recover(),
 		middleware.Decompress(),
 		middleware.Gzip(),
 	)
 
 	s := store.New(db)
 	t := auth.New(cfg)
-	v := validator.New()
-	h := handlers.New(s, cfg, t, v)
+	h := handlers.New(s, cfg, t)
 
 	e.GET("/", h.HelloHandler())
 	v1 := e.Group("/api")
@@ -48,24 +46,23 @@ func main() {
 		{
 			user.POST("/register", h.Register())
 			user.POST("/login", h.Login())
-			// authGroup := user.Group("")
-			// {
-			// 	authGroup.Use(h.TokenRefresherMiddleware)
-			// 	authGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
-			// 		Claims:                  &auth.Claims{},
-			// 		SigningKey:              []byte(cfg.SigningKey),
-			// 		TokenLookup:             "cookie:access-token",
-			// 		ErrorHandlerWithContext: t.JWT().JWTErrorChecker,
-			// 	}))
-			// 	authGroup.POST("/orders", h.HelloHandler())
-			// 	authGroup.GET("/orders", h.HelloHandler())
-			// 	authGroup.GET("/balance", h.HelloHandler())
-			// 	balance := authGroup.Group("/balance")
-			// 	{
-			// 		balance.POST("/withdraw", h.HelloHandler())
-			// 		balance.GET("/withdrawals", h.HelloHandler())
-			// 	}
-			// }
+			authGroup := user.Group("")
+			{
+				authGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
+					Claims:                  &auth.Claims{},
+					SigningKey:              []byte(cfg.SigningKey),
+					TokenLookup:             "cookie:access-token",
+					ErrorHandlerWithContext: t.JWT().JWTErrorChecker,
+				}))
+				authGroup.POST("/orders", h.OrderUpload())
+				authGroup.GET("/orders", h.HelloHandler())
+				authGroup.GET("/balance", h.HelloHandler())
+				balance := authGroup.Group("/balance")
+				{
+					balance.POST("/withdraw", h.HelloHandler())
+					balance.GET("/withdrawals", h.HelloHandler())
+				}
+			}
 		}
 	}
 

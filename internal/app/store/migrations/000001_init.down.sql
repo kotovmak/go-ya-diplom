@@ -1,3 +1,3 @@
-DROP TABLE "withdraw";
-DROP TABLE "order";
-DROP TABLE "user";
+DROP TABLE "withdraws";
+DROP TABLE "orders";
+DROP TABLE "users";

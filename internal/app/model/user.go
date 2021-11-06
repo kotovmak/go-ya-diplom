@@ -7,9 +7,9 @@ import (
 
 // User ...
 type User struct {
-	ID                int    `json:"id"`
-	Login             string `json:"login" validate:"min=3,required"`
-	Password          string `json:"password,omitempty" validate:"required"`
+	ID                int    `json:"-"`
+	Login             string `json:"login" validate:"required,alphanum,min=3,max=32"`
+	Password          string `json:"password,omitempty" validete:"required,min=8,max=72"`
 	EncryptedPassword string `json:"-"`
 	Balance           int    `json:"current"`
 	Withdrawn         int    `json:"withdrawn"`
