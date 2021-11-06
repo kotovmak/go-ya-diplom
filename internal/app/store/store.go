@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"go-ya-diplom/internal/app/interfaces"
 	"os"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -13,7 +14,8 @@ import (
 )
 
 type store struct {
-	db *sql.DB
+	db             *sql.DB
+	userRepository *UserRepository
 }
 
 func New(db *sql.DB) *store {
@@ -54,4 +56,17 @@ func initMigrations(databaseDSN string) error {
 		return err
 	}
 	return nil
+}
+
+// User ...
+func (s *store) User() interfaces.UserRepository {
+	if s.userRepository != nil {
+		return s.userRepository
+	}
+
+	s.userRepository = &UserRepository{
+		store: s,
+	}
+
+	return s.userRepository
 }

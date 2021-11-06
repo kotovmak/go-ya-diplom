@@ -1,18 +1,18 @@
-CREATE TABLE IF NOT EXISTS "user" (
+CREATE TABLE IF NOT EXISTS "users" (
   "user_id" bigserial PRIMARY KEY,
   "login" varchar NOT NULL,
   "password" varchar NOT NULL,
-  "balance" bigint NOT NULL,
-  "withdrawn" bigint NOT NULL
+  "balance" bigint NOT NULL DEFAULT 0,
+  "withdrawn" bigint NOT NULL DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS "order" (
   "order_id" bigserial PRIMARY KEY,
   "number" varchar NOT NULL,
   "status" varchar NOT NULL,
-  "accrual" varchar NOT NULL,
+  "accrual" bigint NOT NULL DEFAULT 0,
   "uploaded_at" timestamptz NOT NULL DEFAULT now(),
   "user_id" bigserial NOT NULL,
-  CONSTRAINT "user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user" ("user_id")
+  CONSTRAINT "user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("user_id")
 );
 CREATE TABLE IF NOT EXISTS "withdraw" (
   "withdraw_id" bigserial PRIMARY KEY,
@@ -21,5 +21,5 @@ CREATE TABLE IF NOT EXISTS "withdraw" (
   "status" varchar NOT NULL,
   "processed_at" timestamptz NOT NULL DEFAULT now(),
   "user_id" bigserial NOT NULL,
-  CONSTRAINT "user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "user" ("user_id")
+  CONSTRAINT "user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("user_id")
 );
