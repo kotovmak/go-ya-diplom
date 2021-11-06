@@ -57,7 +57,7 @@ func (h *Handler) Login() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 		}
 
-		return c.String(http.StatusOK, "")
+		return c.JSON(http.StatusOK, u)
 	}
 }
 
@@ -95,7 +95,7 @@ func (h *Handler) Register() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 		}
 
-		return c.String(http.StatusOK, "")
+		return c.JSON(http.StatusOK, u)
 	}
 }
 
