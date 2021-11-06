@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"go-ya-diplom/internal/app/config"
 	"go-ya-diplom/internal/app/errors"
@@ -76,7 +77,7 @@ func (h *Handler) Register() echo.HandlerFunc {
 		if u1 != nil {
 			return echo.NewHTTPError(http.StatusConflict, errors.ErrAlreadyExists.Error())
 		}
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 
