@@ -10,10 +10,6 @@ type UserRepository struct {
 
 // Create ...
 func (r *UserRepository) Create(u model.User) error {
-	if err := u.Validate(); err != nil {
-		return err
-	}
-
 	if err := u.BeforeCreate(); err != nil {
 		return err
 	}
@@ -23,6 +19,15 @@ func (r *UserRepository) Create(u model.User) error {
 		u.Login,
 		u.EncryptedPassword,
 	).Scan(&u.ID)
+}
+
+func (r *UserRepository) Update(u model.User) error {
+	return r.store.db.QueryRow(
+		"UPDATE users SET (balance, withdrawn) = ($1, $2) WHERE user_id = $3",
+		u.Balance,
+		u.Withdrawn,
+		u.ID,
+	).Err()
 }
 
 // FindByLogin ...

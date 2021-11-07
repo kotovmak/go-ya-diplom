@@ -59,7 +59,7 @@ func main() {
 				balance := authGroup.Group("/balance")
 				{
 					balance.GET("", h.Balance())
-					balance.POST("/withdraw", h.HelloHandler())
+					balance.POST("/withdraw", h.Withdraw())
 					balance.GET("/withdrawals", h.HelloHandler())
 				}
 			}
