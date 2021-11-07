@@ -6,6 +6,7 @@ import (
 	"go-ya-diplom/internal/app/errors"
 	"go-ya-diplom/internal/app/interfaces"
 	"go-ya-diplom/internal/app/model"
+	"io"
 	"net/http"
 	"time"
 
@@ -106,12 +107,16 @@ func (h *Handler) OrderUpload() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
 
+		body, err := io.ReadAll(c.Request().Body)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		}
+
 		o := &model.Order{
 			Status:     "NEW",
 			UploatedAt: time.Now(),
-		}
-		if err := c.Bind(o); err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+			Number:     string(body),
+			UserID:     u.ID,
 		}
 
 		validate := o.Validate()

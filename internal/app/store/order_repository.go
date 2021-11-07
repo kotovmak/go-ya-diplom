@@ -11,9 +11,10 @@ type OrderRepository struct {
 // Create ...
 func (r *OrderRepository) Create(o *model.Order) error {
 	return r.store.db.QueryRow(
-		"INSERT INTO orders (number, status) VALUES ($1, $2) RETURNING order_id",
+		"INSERT INTO orders (number, status, user_id) VALUES ($1, $2, $3) RETURNING order_id",
 		o.Number,
 		o.Status,
+		o.UserID,
 	).Scan(&o.ID)
 }
 
