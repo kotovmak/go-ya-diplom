@@ -138,10 +138,10 @@ func (h *Handler) OrderUpload() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 
-		// err = h.store.Order().Create(o)
-		// if err != nil {
-		// 	return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
-		// }
+		err = h.store.Order().Create(o)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
 
 		h.worker.Add(o)
 
