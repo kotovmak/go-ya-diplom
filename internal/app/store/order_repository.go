@@ -18,6 +18,15 @@ func (r *OrderRepository) Create(o model.Order) error {
 	).Scan(&o.ID)
 }
 
+func (r *OrderRepository) Update(u model.Order) error {
+	return r.store.db.QueryRow(
+		"UPDATE orders SET (status, accrual) = ($1, $2) WHERE order_id = $3",
+		u.Status,
+		u.Accrual,
+		u.ID,
+	).Err()
+}
+
 // FindByLogin ...
 func (r *OrderRepository) FindByNumber(number string) (model.Order, error) {
 	o := model.Order{}

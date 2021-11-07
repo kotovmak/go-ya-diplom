@@ -5,8 +5,10 @@ import (
 	"flag"
 	"go-ya-diplom/internal/app/auth"
 	"go-ya-diplom/internal/app/config"
+	"go-ya-diplom/internal/app/errors"
 	"go-ya-diplom/internal/app/handlers"
 	"go-ya-diplom/internal/app/store"
+	"go-ya-diplom/internal/app/worker"
 	"log"
 	"net/http"
 
@@ -37,7 +39,12 @@ func main() {
 
 	s := store.New(db)
 	t := auth.New(cfg)
-	h := handlers.New(s, cfg, t)
+	w := worker.New(cfg, s)
+	if cfg.AccrualSystemAddress == "" {
+		log.Fatal(errors.ErrAccrualSystemAddressEmpty)
+	}
+	w.Init(ctx)
+	h := handlers.New(s, cfg, t, w)
 
 	e.GET("/", h.HelloHandler())
 	v1 := e.Group("/api")

@@ -17,6 +17,12 @@ type Order struct {
 	UploatedAt time.Time `json:"uploated_at"`
 }
 
+type AccrualResponse struct {
+	Order   string  `json:"order"`
+	Status  string  `json:"status"`
+	Accrual float32 `json:"accrual"`
+}
+
 func (o *Order) Validate() error {
 	validate := validator.New()
 	err := validate.Struct(o)

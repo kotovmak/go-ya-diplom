@@ -16,6 +16,7 @@ type UserRepository interface {
 
 type OrderRepository interface {
 	Create(model.Order) error
+	Update(model.Order) error
 	FindByNumber(string) (model.Order, error)
 	FindByUser(int) ([]model.Order, error)
 }

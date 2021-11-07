@@ -6,6 +6,7 @@ import (
 	"go-ya-diplom/internal/app/errors"
 	"go-ya-diplom/internal/app/interfaces"
 	"go-ya-diplom/internal/app/model"
+	"go-ya-diplom/internal/app/worker"
 	"io"
 	"net/http"
 	"time"
@@ -17,13 +18,15 @@ type Handler struct {
 	store        interfaces.Store
 	cfg          *config.Config
 	tokenManager interfaces.TokenManager
+	worker       *worker.Worker
 }
 
-func New(s interfaces.Store, cfg *config.Config, t interfaces.TokenManager) *Handler {
+func New(s interfaces.Store, cfg *config.Config, t interfaces.TokenManager, w *worker.Worker) *Handler {
 	return &Handler{
 		store:        s,
 		cfg:          cfg,
 		tokenManager: t,
+		worker:       w,
 	}
 }
 
@@ -139,6 +142,8 @@ func (h *Handler) OrderUpload() echo.HandlerFunc {
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
+
+		h.worker.Run(o)
 
 		return c.JSON(http.StatusAccepted, o)
 	}
