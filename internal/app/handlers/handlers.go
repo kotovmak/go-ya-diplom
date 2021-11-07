@@ -213,7 +213,7 @@ func (h *Handler) Withdraw() echo.HandlerFunc {
 
 		sum := int(wr.Sum * 100)
 		if u.Balance < sum {
-			return echo.NewHTTPError(http.StatusPaymentRequired, validate.Error())
+			return echo.NewHTTPError(http.StatusPaymentRequired, errors.ErrNotEnoughMoney)
 		}
 
 		w := model.Withdraw{

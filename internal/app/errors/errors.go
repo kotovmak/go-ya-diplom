@@ -11,4 +11,5 @@ var (
 	ErrUnexpectedSigningMethod  = errors.New("unexpected signing method")
 	ErrAlreadyExists            = errors.New("already exist")
 	ErrOrderNumberInvalid       = errors.New("order number is invalid")
+	ErrNotEnoughMoney           = errors.New("not enough money")
 )
