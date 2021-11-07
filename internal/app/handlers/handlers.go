@@ -157,7 +157,10 @@ func (h *Handler) OrderList() echo.HandlerFunc {
 		}
 
 		orderList, err := h.store.Order().FindByUser(u.ID)
-		if err != nil && err != sql.ErrNoRows {
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return echo.NewHTTPError(http.StatusNoContent, err.Error())
+			}
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 
