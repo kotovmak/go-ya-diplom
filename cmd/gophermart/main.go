@@ -55,7 +55,7 @@ func main() {
 					ErrorHandlerWithContext: t.JWT().JWTErrorChecker,
 				}))
 				authGroup.POST("/orders", h.OrderUpload())
-				authGroup.GET("/orders", h.HelloHandler())
+				authGroup.GET("/orders", h.OrderList())
 				authGroup.GET("/balance", h.HelloHandler())
 				balance := authGroup.Group("/balance")
 				{

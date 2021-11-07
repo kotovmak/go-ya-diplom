@@ -27,7 +27,7 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-func (t *JWTCookie) GenerateTokensAndSetCookies(user *model.User, c echo.Context) error {
+func (t *JWTCookie) GenerateTokensAndSetCookies(user model.User, c echo.Context) error {
 	accessToken, exp, err := t.generateAccessToken(user)
 	if err != nil {
 		return err
@@ -45,20 +45,20 @@ func (t *JWTCookie) GenerateTokensAndSetCookies(user *model.User, c echo.Context
 	return nil
 }
 
-func (t *JWTCookie) generateRefreshToken(user *model.User) (string, time.Time, error) {
+func (t *JWTCookie) generateRefreshToken(user model.User) (string, time.Time, error) {
 	expirationTime := time.Now().Add(t.refreshTTL)
 
 	return t.generateToken(user, expirationTime, []byte(t.refreshKey))
 }
 
-func (t *JWTCookie) generateAccessToken(user *model.User) (string, time.Time, error) {
+func (t *JWTCookie) generateAccessToken(user model.User) (string, time.Time, error) {
 	// Declare the expiration time of the token (1h).
 	expirationTime := time.Now().Add(t.ttl)
 
 	return t.generateToken(user, expirationTime, []byte(t.signingKey))
 }
 
-func (t *JWTCookie) generateToken(user *model.User, expirationTime time.Time, secret []byte) (string, time.Time, error) {
+func (t *JWTCookie) generateToken(user model.User, expirationTime time.Time, secret []byte) (string, time.Time, error) {
 	claims := &Claims{
 		Login: user.Login,
 		StandardClaims: jwt.StandardClaims{
@@ -86,7 +86,7 @@ func (t *JWTCookie) setTokenCookie(name, token string, expiration time.Time, c e
 	c.SetCookie(cookie)
 }
 
-func (t *JWTCookie) setUserCookie(user *model.User, expiration time.Time, c echo.Context) {
+func (t *JWTCookie) setUserCookie(user model.User, expiration time.Time, c echo.Context) {
 	cookie := new(http.Cookie)
 	cookie.Name = "user"
 	cookie.Value = user.Login

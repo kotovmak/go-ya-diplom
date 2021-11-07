@@ -35,7 +35,7 @@ func (h *Handler) HelloHandler() echo.HandlerFunc {
 
 func (h *Handler) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		u := &model.User{}
+		u := model.User{}
 
 		if err := c.Bind(u); err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -62,7 +62,7 @@ func (h *Handler) Login() echo.HandlerFunc {
 
 func (h *Handler) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		u := &model.User{}
+		u := model.User{}
 
 		if err := c.Bind(u); err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -74,7 +74,7 @@ func (h *Handler) Register() echo.HandlerFunc {
 		}
 
 		u1, err := h.store.User().FindByLogin(u.Login)
-		if u1 != nil {
+		if u1.ID > 0 {
 			return echo.NewHTTPError(http.StatusConflict, errors.ErrAlreadyExists.Error())
 		}
 		if err != nil && err != sql.ErrNoRows {
@@ -112,7 +112,7 @@ func (h *Handler) OrderUpload() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
-		o := &model.Order{
+		o := model.Order{
 			Status:     "NEW",
 			UploatedAt: time.Now(),
 			Number:     string(body),
@@ -125,7 +125,7 @@ func (h *Handler) OrderUpload() echo.HandlerFunc {
 		}
 
 		o1, err := h.store.Order().FindByNumber(o.Number)
-		if o1 != nil {
+		if o1.ID > 0 {
 			if o1.UserID == u.ID {
 				return echo.NewHTTPError(http.StatusOK, errors.ErrAlreadyExists.Error())
 			}
@@ -141,5 +141,26 @@ func (h *Handler) OrderUpload() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusAccepted, o)
+	}
+}
+
+func (h *Handler) OrderList() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		user, err := c.Cookie("user")
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
+		}
+
+		u, err := h.store.User().FindByLogin(user.Value)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
+
+		orderList, err := h.store.Order().FindByUser(u.ID)
+		if err != nil && err != sql.ErrNoRows {
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusAccepted, orderList)
 	}
 }

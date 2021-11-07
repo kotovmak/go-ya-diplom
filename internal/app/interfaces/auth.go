@@ -11,6 +11,6 @@ type TokenManager interface {
 }
 
 type JWTCookie interface {
-	GenerateTokensAndSetCookies(user *model.User, c echo.Context) error
+	GenerateTokensAndSetCookies(user model.User, c echo.Context) error
 	JWTErrorChecker(err error, c echo.Context) error
 }

@@ -8,11 +8,12 @@ type Store interface {
 }
 
 type UserRepository interface {
-	Create(*model.User) error
-	FindByLogin(string) (*model.User, error)
+	Create(model.User) error
+	FindByLogin(string) (model.User, error)
 }
 
 type OrderRepository interface {
-	Create(*model.Order) error
-	FindByNumber(string) (*model.Order, error)
+	Create(model.Order) error
+	FindByNumber(string) (model.Order, error)
+	FindByUser(int) ([]model.Order, error)
 }

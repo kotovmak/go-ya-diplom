@@ -10,7 +10,7 @@ type Order struct {
 	ID         int       `json:"-"`
 	Number     string    `json:"number" validate:"required"`
 	Status     string    `json:"status"`
-	Accrual    int       `json:"accrual"`
+	Accrual    int       `json:"accrual,omitempty"`
 	UserID     int       `json:"-"`
 	UploatedAt time.Time `json:"uploated_at"`
 }

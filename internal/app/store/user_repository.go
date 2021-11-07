@@ -9,7 +9,7 @@ type UserRepository struct {
 }
 
 // Create ...
-func (r *UserRepository) Create(u *model.User) error {
+func (r *UserRepository) Create(u model.User) error {
 	if err := u.Validate(); err != nil {
 		return err
 	}
@@ -26,8 +26,8 @@ func (r *UserRepository) Create(u *model.User) error {
 }
 
 // FindByLogin ...
-func (r *UserRepository) FindByLogin(login string) (*model.User, error) {
-	u := &model.User{}
+func (r *UserRepository) FindByLogin(login string) (model.User, error) {
+	u := model.User{}
 	if err := r.store.db.QueryRow(
 		"SELECT user_id, login, password, balance, withdrawn FROM users WHERE login = $1",
 		login,
@@ -38,7 +38,7 @@ func (r *UserRepository) FindByLogin(login string) (*model.User, error) {
 		&u.Balance,
 		&u.Withdrawn,
 	); err != nil {
-		return nil, err
+		return u, err
 	}
 
 	return u, nil
