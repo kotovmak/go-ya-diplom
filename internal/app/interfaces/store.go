@@ -22,5 +22,5 @@ type OrderRepository interface {
 
 type WithdrawRepository interface {
 	Create(model.Withdraw) error
-	Find() ([]model.Withdraw, error)
+	FindByUser(int) ([]model.Withdraw, error)
 }

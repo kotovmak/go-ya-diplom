@@ -164,7 +164,7 @@ func (h *Handler) OrderList() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 
-		return c.JSON(http.StatusAccepted, orderList)
+		return c.JSON(http.StatusOK, orderList)
 	}
 }
 
@@ -185,7 +185,7 @@ func (h *Handler) Balance() echo.HandlerFunc {
 			Withdrawn: float32(u.Withdrawn) / 100,
 		}
 
-		return c.JSON(http.StatusAccepted, b)
+		return c.JSON(http.StatusOK, b)
 	}
 }
 
@@ -201,7 +201,7 @@ func (h *Handler) Withdraw() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
 
-		wr := model.WithdrawRequest{}
+		wr := model.Withdraw{}
 
 		if err := c.Bind(&wr); err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
@@ -219,7 +219,7 @@ func (h *Handler) Withdraw() echo.HandlerFunc {
 		w := model.Withdraw{
 			Status: "PROCESSED",
 			UserID: u.ID,
-			Sum:    sum,
+			Sum:    wr.Sum,
 			Order:  wr.Order,
 		}
 
@@ -233,5 +233,29 @@ func (h *Handler) Withdraw() echo.HandlerFunc {
 		h.store.User().Update(u)
 
 		return c.JSON(http.StatusOK, w)
+	}
+}
+
+func (h *Handler) WithdrawList() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		user, err := c.Cookie("user")
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
+		}
+
+		u, err := h.store.User().FindByLogin(user.Value)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
+
+		withdrawList, err := h.store.Withdraw().FindByUser(u.ID)
+		if err != nil {
+			if err == sql.ErrNoRows {
+				return echo.NewHTTPError(http.StatusNoContent, err.Error())
+			}
+			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, withdrawList)
 	}
 }

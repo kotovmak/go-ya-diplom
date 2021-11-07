@@ -10,36 +10,40 @@ type WithdrawRepository struct {
 
 // Create ...
 func (r *WithdrawRepository) Create(w model.Withdraw) error {
+	sum := int(w.Sum * 100)
 	return r.store.db.QueryRow(
 		"INSERT INTO withdraws (\"order\", status, sum, user_id) VALUES ($1, $2, $3, $4)",
 		w.Order,
 		w.Status,
-		w.Sum,
+		sum,
 		w.UserID,
 	).Err()
 }
 
-func (r *WithdrawRepository) Find() ([]model.Withdraw, error) {
+func (r *WithdrawRepository) FindByUser(userID int) ([]model.Withdraw, error) {
 	ol := []model.Withdraw{}
 	data, err := r.store.db.Query(
-		"SELECT withdraw_id, \"order\", status, sum, processed_at, user_id FROM withdraws",
+		"SELECT withdraw_id, \"order\", status, sum, processed_at, user_id FROM withdraws WHERE user_id=$1",
+		userID,
 	)
 	if err != nil {
 		return ol, err
 	}
 	for data.Next() {
 		o := model.Withdraw{}
+		var sum int
 		err = data.Scan(
 			&o.ID,
 			&o.Order,
 			&o.Status,
-			&o.Sum,
+			&sum,
 			&o.ProcessedAt,
 			&o.UserID,
 		)
 		if err != nil {
 			return nil, err
 		}
+		o.Sum = float32(sum) / 100
 		ol = append(ol, o)
 	}
 

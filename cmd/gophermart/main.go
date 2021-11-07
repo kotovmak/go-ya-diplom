@@ -60,7 +60,7 @@ func main() {
 				{
 					balance.GET("", h.Balance())
 					balance.POST("/withdraw", h.Withdraw())
-					balance.GET("/withdrawals", h.HelloHandler())
+					balance.GET("/withdrawals", h.WithdrawList())
 				}
 			}
 		}

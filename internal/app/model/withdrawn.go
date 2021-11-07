@@ -10,19 +10,14 @@ import (
 
 type Withdraw struct {
 	ID          int       `json:"-"`
-	Order       string    `json:"order"`
-	Sum         int       `json:"sum"`
+	Order       string    `json:"order" validate:"required"`
+	Sum         float32   `json:"sum" validate:"required"`
 	Status      string    `json:"status"`
 	ProcessedAt time.Time `json:"processed_at"`
 	UserID      int       `json:"-"`
 }
 
-type WithdrawRequest struct {
-	Order string  `json:"order" validate:"required"`
-	Sum   float32 `json:"sum" validate:"required,gt=0"`
-}
-
-func (w *WithdrawRequest) Validate() error {
+func (w *Withdraw) Validate() error {
 	validate := validator.New()
 	err := validate.Struct(w)
 	if err != nil {
