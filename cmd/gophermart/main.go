@@ -56,9 +56,9 @@ func main() {
 				}))
 				authGroup.POST("/orders", h.OrderUpload())
 				authGroup.GET("/orders", h.OrderList())
-				authGroup.GET("/balance", h.HelloHandler())
 				balance := authGroup.Group("/balance")
 				{
+					balance.GET("", h.Balance())
 					balance.POST("/withdraw", h.HelloHandler())
 					balance.GET("/withdrawals", h.HelloHandler())
 				}

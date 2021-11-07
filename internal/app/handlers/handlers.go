@@ -167,3 +167,24 @@ func (h *Handler) OrderList() echo.HandlerFunc {
 		return c.JSON(http.StatusAccepted, orderList)
 	}
 }
+
+func (h *Handler) Balance() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		user, err := c.Cookie("user")
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
+		}
+
+		u, err := h.store.User().FindByLogin(user.Value)
+		if err != nil {
+			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
+		}
+
+		b := model.Balance{
+			Balance:   float32(u.Balance) / 100,
+			Withdrawn: float32(u.Withdrawn) / 100,
+		}
+
+		return c.JSON(http.StatusAccepted, b)
+	}
+}

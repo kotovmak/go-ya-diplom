@@ -7,12 +7,17 @@ import (
 
 // User ...
 type User struct {
-	ID                int    `json:"-"`
+	ID                int    `json:"id"`
 	Login             string `json:"login" validate:"required,alphanum,min=3,max=32"`
 	Password          string `json:"password,omitempty" validete:"required,min=8,max=72"`
 	EncryptedPassword string `json:"-"`
-	Balance           int    `json:"current"`
-	Withdrawn         int    `json:"withdrawn"`
+	Balance           int    `json:"-"`
+	Withdrawn         int    `json:"-"`
+}
+
+type Balance struct {
+	Balance   float32 `json:"current"`
+	Withdrawn float32 `json:"withdrawn"`
 }
 
 func (u *User) Validate() error {
