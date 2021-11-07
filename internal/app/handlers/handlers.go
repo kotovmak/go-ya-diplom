@@ -37,7 +37,7 @@ func (h *Handler) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		u := model.User{}
 
-		if err := c.Bind(u); err != nil {
+		if err := c.Bind(&u); err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
@@ -64,7 +64,7 @@ func (h *Handler) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		u := model.User{}
 
-		if err := c.Bind(u); err != nil {
+		if err := c.Bind(&u); err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 		}
 
