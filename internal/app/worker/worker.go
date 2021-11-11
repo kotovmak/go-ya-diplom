@@ -37,7 +37,7 @@ func (w *Worker) Init(ctx context.Context) error {
 			var err error
 			for ch := range w.recordCh {
 				if ch {
-					err = w.handle()
+					err = w.handle(ctx)
 				}
 			}
 			return err
@@ -46,7 +46,7 @@ func (w *Worker) Init(ctx context.Context) error {
 	return nil
 }
 
-func (w *Worker) handle() error {
+func (w *Worker) handle(ctx context.Context) error {
 	if len(w.query) == 0 {
 		return nil
 	}
@@ -81,7 +81,7 @@ func (w *Worker) handle() error {
 	if a.Status == "PROCESSED" || a.Status == "INVALID" {
 		o.Status = a.Status
 		o.Accrual = int(a.Accrual * 100)
-		w.store.Order().Update(o)
+		w.store.Order().Update(ctx, o)
 		return nil
 	}
 

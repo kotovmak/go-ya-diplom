@@ -49,7 +49,7 @@ func (h *Handler) Login() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, validate.Error())
 		}
 
-		u1, err := h.store.User().FindByLogin(u.Login)
+		u1, err := h.store.User().FindByLogin(c.Request().Context(), u.Login)
 		if err != nil || !u1.ComparePassword(u.Password) {
 			return echo.NewHTTPError(http.StatusUnauthorized, errors.ErrIncorrectEmailOrPassword)
 		}
@@ -76,7 +76,7 @@ func (h *Handler) Register() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, validate.Error())
 		}
 
-		u1, err := h.store.User().FindByLogin(u.Login)
+		u1, err := h.store.User().FindByLogin(c.Request().Context(), u.Login)
 		if u1.ID > 0 {
 			return echo.NewHTTPError(http.StatusConflict, errors.ErrAlreadyExists.Error())
 		}
@@ -84,7 +84,7 @@ func (h *Handler) Register() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 
-		if err := h.store.User().Create(u); err != nil {
+		if err := h.store.User().Create(c.Request().Context(), u); err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 		u.Sanitize()
@@ -105,7 +105,7 @@ func (h *Handler) OrderUpload() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 		}
 
-		u, err := h.store.User().FindByLogin(user.Value)
+		u, err := h.store.User().FindByLogin(c.Request().Context(), user.Value)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
@@ -127,7 +127,7 @@ func (h *Handler) OrderUpload() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, validate.Error())
 		}
 
-		o1, err := h.store.Order().FindByNumber(o.Number)
+		o1, err := h.store.Order().FindByNumber(c.Request().Context(), o.Number)
 		if o1.ID > 0 {
 			if o1.UserID == u.ID {
 				return echo.NewHTTPError(http.StatusOK, errors.ErrAlreadyExists.Error())
@@ -138,7 +138,7 @@ func (h *Handler) OrderUpload() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 
-		err = h.store.Order().Create(o)
+		err = h.store.Order().Create(c.Request().Context(), o)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
@@ -156,12 +156,12 @@ func (h *Handler) OrderList() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 		}
 
-		u, err := h.store.User().FindByLogin(user.Value)
+		u, err := h.store.User().FindByLogin(c.Request().Context(), user.Value)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
 
-		orderList, err := h.store.Order().FindByUser(u.ID)
+		orderList, err := h.store.Order().FindByUser(c.Request().Context(), u.ID)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				return echo.NewHTTPError(http.StatusNoContent, err.Error())
@@ -180,7 +180,7 @@ func (h *Handler) Balance() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 		}
 
-		u, err := h.store.User().FindByLogin(user.Value)
+		u, err := h.store.User().FindByLogin(c.Request().Context(), user.Value)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
@@ -201,7 +201,7 @@ func (h *Handler) Withdraw() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 		}
 
-		u, err := h.store.User().FindByLogin(user.Value)
+		u, err := h.store.User().FindByLogin(c.Request().Context(), user.Value)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
@@ -228,14 +228,14 @@ func (h *Handler) Withdraw() echo.HandlerFunc {
 			Order:  wr.Order,
 		}
 
-		err = h.store.Withdraw().Create(w)
+		err = h.store.Withdraw().Create(c.Request().Context(), w)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 		}
 
 		u.Balance -= sum
 		u.Withdrawn += sum
-		h.store.User().Update(u)
+		h.store.User().Update(c.Request().Context(), u)
 
 		return c.JSON(http.StatusOK, w)
 	}
@@ -248,12 +248,12 @@ func (h *Handler) WithdrawList() echo.HandlerFunc {
 			return echo.NewHTTPError(http.StatusUnauthorized, err.Error())
 		}
 
-		u, err := h.store.User().FindByLogin(user.Value)
+		u, err := h.store.User().FindByLogin(c.Request().Context(), user.Value)
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}
 
-		withdrawList, err := h.store.Withdraw().FindByUser(u.ID)
+		withdrawList, err := h.store.Withdraw().FindByUser(c.Request().Context(), u.ID)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				return echo.NewHTTPError(http.StatusNoContent, err.Error())

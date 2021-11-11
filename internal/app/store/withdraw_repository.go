@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"go-ya-diplom/internal/app/model"
 )
 
@@ -9,9 +10,9 @@ type WithdrawRepository struct {
 }
 
 // Create ...
-func (r *WithdrawRepository) Create(w model.Withdraw) error {
+func (r *WithdrawRepository) Create(ctx context.Context, w model.Withdraw) error {
 	sum := int(w.Sum * 100)
-	return r.store.db.QueryRow(
+	return r.store.db.QueryRowContext(ctx,
 		"INSERT INTO withdraws (\"order\", status, sum, user_id) VALUES ($1, $2, $3, $4)",
 		w.Order,
 		w.Status,
@@ -20,9 +21,9 @@ func (r *WithdrawRepository) Create(w model.Withdraw) error {
 	).Err()
 }
 
-func (r *WithdrawRepository) FindByUser(userID int) ([]model.Withdraw, error) {
+func (r *WithdrawRepository) FindByUser(ctx context.Context, userID int) ([]model.Withdraw, error) {
 	ol := []model.Withdraw{}
-	data, err := r.store.db.Query(
+	data, err := r.store.db.QueryContext(ctx,
 		"SELECT withdraw_id, \"order\", status, sum, processed_at, user_id FROM withdraws WHERE user_id=$1",
 		userID,
 	)

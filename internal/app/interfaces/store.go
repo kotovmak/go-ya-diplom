@@ -1,6 +1,9 @@
 package interfaces
 
-import "go-ya-diplom/internal/app/model"
+import (
+	"context"
+	"go-ya-diplom/internal/app/model"
+)
 
 type Store interface {
 	User() UserRepository
@@ -9,19 +12,19 @@ type Store interface {
 }
 
 type UserRepository interface {
-	Create(model.User) error
-	Update(model.User) error
-	FindByLogin(string) (model.User, error)
+	Create(context.Context, model.User) error
+	Update(context.Context, model.User) error
+	FindByLogin(context.Context, string) (model.User, error)
 }
 
 type OrderRepository interface {
-	Create(model.Order) error
-	Update(model.Order) error
-	FindByNumber(string) (model.Order, error)
-	FindByUser(int) ([]model.Order, error)
+	Create(context.Context, model.Order) error
+	Update(context.Context, model.Order) error
+	FindByNumber(context.Context, string) (model.Order, error)
+	FindByUser(context.Context, int) ([]model.Order, error)
 }
 
 type WithdrawRepository interface {
-	Create(model.Withdraw) error
-	FindByUser(int) ([]model.Withdraw, error)
+	Create(context.Context, model.Withdraw) error
+	FindByUser(context.Context, int) ([]model.Withdraw, error)
 }
