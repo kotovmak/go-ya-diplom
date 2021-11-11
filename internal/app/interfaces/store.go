@@ -22,7 +22,7 @@ type OrderRepository interface {
 	Create(context.Context, model.Order) error
 	Update(context.Context, model.Order) error
 	FindByNumber(context.Context, string) (model.Order, error)
-	FindByUser(context.Context, int) ([]model.Order, error)
+	FindByUser(context.Context, int) ([]model.OrderList, error)
 }
 
 type WithdrawRepository interface {

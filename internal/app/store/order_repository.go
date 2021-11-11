@@ -48,28 +48,28 @@ func (r *OrderRepository) FindByNumber(ctx context.Context, number string) (mode
 	return o, nil
 }
 
-func (r *OrderRepository) FindByUser(ctx context.Context, userID int) ([]model.Order, error) {
-	ol := []model.Order{}
+func (r *OrderRepository) FindByUser(ctx context.Context, userID int) ([]model.OrderList, error) {
+	ol := []model.OrderList{}
 	data, err := r.store.db.QueryContext(ctx,
-		"SELECT order_id, number, status, accrual, uploaded_at, user_id FROM orders WHERE user_id = $1",
+		"SELECT number, status, accrual, uploaded_at FROM orders WHERE user_id = $1",
 		userID,
 	)
 	if err != nil {
 		return ol, err
 	}
 	for data.Next() {
-		o := model.Order{}
+		o := model.OrderList{}
+		var sum int
 		err = data.Scan(
-			&o.ID,
 			&o.Number,
 			&o.Status,
-			&o.Accrual,
+			&sum,
 			&o.UploatedAt,
-			&o.UserID,
 		)
 		if err != nil {
 			return nil, err
 		}
+		o.Accrual = float32(sum) / 100
 		ol = append(ol, o)
 	}
 
