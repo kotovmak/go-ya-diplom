@@ -3,8 +3,6 @@ package auth
 import (
 	"go-ya-diplom/internal/app/config"
 	"go-ya-diplom/internal/app/interfaces"
-	"log"
-	"time"
 )
 
 type auth struct {
@@ -23,20 +21,11 @@ func (a *auth) JWT() interfaces.JWTCookie {
 		return a.jwtCookie
 	}
 
-	ttl, err := time.ParseDuration(a.cfg.TokenTTL)
-	if err != nil {
-		log.Fatal(err)
-	}
-	rttl, err := time.ParseDuration(a.cfg.RefreshTTL)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	a.jwtCookie = &JWTCookie{
 		signingKey: a.cfg.SigningKey,
-		refreshTTL: rttl,
+		refreshTTL: a.cfg.TokenTTL,
 		refreshKey: a.cfg.RefreshKey,
-		ttl:        ttl,
+		ttl:        a.cfg.RefreshTTL,
 	}
 
 	return a.jwtCookie
