@@ -100,6 +100,17 @@ func (w *Worker) check(ctx context.Context, q model.Query) error {
 		if err != nil {
 			return err
 		}
+
+		u, err := w.store.User().FindByID(ctx, o.UserID)
+		if err != nil {
+			return err
+		}
+
+		u.Balance += o.Accrual
+		err = w.store.User().Update(ctx, u)
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 

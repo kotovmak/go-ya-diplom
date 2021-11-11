@@ -16,6 +16,7 @@ type UserRepository interface {
 	Create(context.Context, model.User) error
 	Update(context.Context, model.User) error
 	FindByLogin(context.Context, string) (model.User, error)
+	FindByID(context.Context, int) (model.User, error)
 }
 
 type OrderRepository interface {

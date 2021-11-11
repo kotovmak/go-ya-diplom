@@ -49,3 +49,21 @@ func (r *UserRepository) FindByLogin(ctx context.Context, login string) (model.U
 
 	return u, nil
 }
+
+func (r *UserRepository) FindByID(ctx context.Context, id int) (model.User, error) {
+	u := model.User{}
+	if err := r.store.db.QueryRowContext(ctx,
+		"SELECT user_id, login, password, balance, withdrawn FROM users WHERE user_id = $1",
+		id,
+	).Scan(
+		&u.ID,
+		&u.Login,
+		&u.EncryptedPassword,
+		&u.Balance,
+		&u.Withdrawn,
+	); err != nil {
+		return u, err
+	}
+
+	return u, nil
+}
