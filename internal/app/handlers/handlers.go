@@ -106,6 +106,9 @@ func (h *Handler) OrderUpload() echo.HandlerFunc {
 		}
 
 		u, err := h.store.User().FindByLogin(c.Request().Context(), user.Value)
+		if err == sql.ErrNoRows {
+			return echo.NewHTTPError(http.StatusUnauthorized, errors.ErrNotAuthenticated.Error())
+		}
 		if err != nil {
 			return echo.NewHTTPError(http.StatusUnprocessableEntity, err.Error())
 		}

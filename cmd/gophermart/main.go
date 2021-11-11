@@ -46,6 +46,7 @@ func main() {
 		log.Fatal(errors.ErrAccrualSystemAddressEmpty)
 	}
 	w.Init(ctx)
+	go w.Run(ctx)
 	h := handlers.New(s, cfg, t, w)
 
 	e.GET("/", h.HelloHandler())

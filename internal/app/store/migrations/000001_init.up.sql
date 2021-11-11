@@ -23,3 +23,8 @@ CREATE TABLE IF NOT EXISTS "withdraws" (
   "user_id" bigserial NOT NULL,
   CONSTRAINT "user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users" ("user_id")
 );
+CREATE TABLE IF NOT EXISTS "query" (
+  "query_id" bigserial PRIMARY KEY,
+  "processing_at" timestamptz NOT NULL DEFAULT now(),
+  "order" varchar NOT NULL
+);

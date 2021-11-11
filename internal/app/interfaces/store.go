@@ -9,6 +9,7 @@ type Store interface {
 	User() UserRepository
 	Order() OrderRepository
 	Withdraw() WithdrawRepository
+	Query() QueryRepository
 }
 
 type UserRepository interface {
@@ -27,4 +28,11 @@ type OrderRepository interface {
 type WithdrawRepository interface {
 	Create(context.Context, model.Withdraw) error
 	FindByUser(context.Context, int) ([]model.Withdraw, error)
+}
+
+type QueryRepository interface {
+	Create(context.Context, model.Query) error
+	FindByOrder(context.Context, string) (model.Query, error)
+	Find(context.Context) ([]model.Query, error)
+	Delete(context.Context, model.Query) error
 }

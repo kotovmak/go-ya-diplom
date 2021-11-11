@@ -18,6 +18,7 @@ type store struct {
 	userRepository     *UserRepository
 	orderRepository    *OrderRepository
 	withdrawRepository *WithdrawRepository
+	queryRepository    *QueryRepository
 }
 
 func New(db *sql.DB) *store {
@@ -95,4 +96,16 @@ func (s *store) Withdraw() interfaces.WithdrawRepository {
 	}
 
 	return s.withdrawRepository
+}
+
+func (s *store) Query() interfaces.QueryRepository {
+	if s.queryRepository != nil {
+		return s.queryRepository
+	}
+
+	s.queryRepository = &QueryRepository{
+		store: s,
+	}
+
+	return s.queryRepository
 }
